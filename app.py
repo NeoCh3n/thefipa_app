@@ -7,6 +7,10 @@ import os
 
 app = Flask(__name__)
 
+
+# Assuming the model is in the same directory as this script
+model_path = os.path.join(os.path.dirname(__file__), 'rf_model.joblib')
+
 # MongoDB setup
 mongo_uri = os.environ.get('MONGO_URI')  # Replace with your actual MongoDB URI
 client = MongoClient(mongo_uri)
@@ -22,7 +26,7 @@ columns = [
 ]
 
 # Load the model only once when the application starts
-model = joblib.load('/Users/chaoyanchen/Desktop/FIP Case Study/thefipa_app/rf_model.joblib')  # Update the path to your model
+model = joblib.load('rf_model.joblib')  # Update the path to your model
 
 @app.route('/')
 def home():
