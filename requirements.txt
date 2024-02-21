@@ -1,4 +1,7 @@
 Flask
 gunicorn
 joblib
-scikit-learn 
+scikit-learn
+pymongo[srv] 
+dnspython
+pandas
