@@ -14,8 +14,8 @@ model_path = os.path.join(os.path.dirname(__file__), 'rf_model.joblib')
 # MongoDB setup
 mongo_uri = os.environ.get('MONGO_URI')  # Replace with your actual MongoDB URI
 client = MongoClient(mongo_uri)
-db = client['cat_blood_tests']  # Replace 'cat_blood_tests' with your actual database name
-collection = db['tests']  # Replace 'tests' with your actual collection name
+db = client['CatDB']  # Replace 'cat_blood_tests' with your actual database name
+collection = db['bloodtest']  # Replace 'tests' with your actual collection name
 
 # Define the column names globally
 columns = [
