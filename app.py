@@ -4,18 +4,16 @@ import pandas as pd
 from pymongo import MongoClient
 import os
 
-
 app = Flask(__name__)
-
 
 # Assuming the model is in the same directory as this script
 model_path = os.path.join(os.path.dirname(__file__), 'rf_model.joblib')
 
 # MongoDB setup
-mongo_uri = os.environ.get('MONGO_URI')  # Replace with your actual MongoDB URI
+mongo_uri = os.environ.get('MONGO_URI')  # Ensure this environment variable is set in your Azure environment
 client = MongoClient(mongo_uri)
-db = client['CatDB']  # Replace 'cat_blood_tests' with your actual database name
-collection = db['bloodtest']  # Replace 'tests' with your actual collection name
+db = client['CatDB']  # Accessing the CatDB database
+collection = db['bloodtest']  # Accessing the bloodtest collection
 
 # Define the column names globally
 columns = [
@@ -26,7 +24,7 @@ columns = [
 ]
 
 # Load the model only once when the application starts
-model = joblib.load('rf_model.joblib')  # Update the path to your model
+model = joblib.load(model_path)  # Load the model
 
 @app.route('/')
 def home():
@@ -39,7 +37,10 @@ def predict():
         data_received = request.get_json(force=True)
         
         # Extract the input data
-        input_data = data_received.get("input")
+        input_data_raw = data_received.get("input")
+        
+        # Convert input data into a list of integers, handling $numberInt
+        input_data = [int(item['$numberInt']) for item in input_data_raw]
         
         # Convert input data into DataFrame or the required format for your model
         df = pd.DataFrame([input_data], columns=columns)
@@ -48,11 +49,11 @@ def predict():
         prediction = model.predict(df)
         
         # Store input data and prediction result in MongoDB
-        data_received['prediction'] = prediction.tolist()
-        collection.insert_one(data_received)
+        result_to_store = {"input": input_data_raw, "prediction": int(prediction[0])}  # Store raw input and prediction
+        collection.insert_one(result_to_store)
         
         # Return prediction as JSON
-        return jsonify({'prediction': prediction.tolist()})
+        return jsonify({'prediction': int(prediction[0])})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
