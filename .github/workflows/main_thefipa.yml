@@ -12,15 +12,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
 
       - name: Set up Python version
         uses: actions/setup-python@v2
@@ -49,7 +44,7 @@ jobs:
             !venv/
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build
     environment:
       name: 'Production'
