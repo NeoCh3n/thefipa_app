@@ -39,8 +39,8 @@ def predict():
         # Extract the input data
         input_data_raw = data_received.get("input")
         
-        # Convert input data into a list of integers, handling $numberInt
-        input_data = [int(item['$numberInt']) for item in input_data_raw]
+        # Convert input data into a list of integers
+        input_data = [int(item) for item in input_data_raw]
         
         # Convert input data into DataFrame or the required format for your model
         df = pd.DataFrame([input_data], columns=columns)
