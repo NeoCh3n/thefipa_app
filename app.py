@@ -26,6 +26,14 @@ columns = [
 # Load the model only once when the application starts
 model = joblib.load(model_path)  # Load the model
 
+@app.before_first_request
+def insert_test_data():
+    test_data = {
+        "input": ["0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2"],
+        "prediction": 1
+    }
+    collection.insert_one(test_data)
+
 @app.route('/')
 def home():
     return "Hello, Flask!"
@@ -56,6 +64,43 @@ def predict():
         return jsonify({'prediction': int(prediction[0])})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/test_db')
+def test_db():
+    try:
+        # 查询测试数据
+        test_data = collection.find_one({"prediction": 1})
+        if test_data:
+            return jsonify({"message": "Database connection successful", "data": test_data})
+        else:
+            return jsonify({"message": "Test data not found"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/test_model', methods=['POST'])
+def test_model():
+    try:
+        # 准备测试数据
+        test_input = ["0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2", "0", "1", "2"]
+        
+        # 调用预测函数
+        response = predict_helper(test_input)
+        
+        return jsonify({"message": "Model prediction successful", "response": response})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def predict_helper(input_data):
+    # 将输入数据转换为整数列表
+    input_data = [int(item) for item in input_data]
+    
+    # 将输入数据转换为 DataFrame 或模型所需的格式
+    df = pd.DataFrame([input_data], columns=columns)
+    
+    # 进行预测
+    prediction = model.predict(df)
+    
+    return int(prediction[0])
 
 if __name__ == '__main__':
     app.run(debug=True)
