@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify, after_this_request
 import joblib
 import pandas as pd
 from pymongo import MongoClient
@@ -93,6 +93,12 @@ def test_model():
         return jsonify({"message": "Model prediction successful", "response": response})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.after_request
+def add_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
 
 def predict_helper(input_data):
     # 将输入数据转换为整数列表
