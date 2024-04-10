@@ -21,8 +21,8 @@ model_path = os.path.join(os.path.dirname(__file__), 'rf_model.joblib')
 # MongoDB setup
 mongo_uri = os.environ.get('MONGO_URI')  # Ensure this environment variable is set in your Azure environment
 client = MongoClient(mongo_uri)
-db = client['Cats']  # Accessing the Cats database
-collection = db['CatDB.bloodtest']  # Accessing the bloodtest collection
+db = client['CatDB']  # Accessing the CatDB database
+collection = db['bloodtest']  # Accessing the bloodtest collection
 
 # Define the column names globally
 columns = [
