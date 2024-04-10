@@ -3,17 +3,12 @@ import joblib
 import pandas as pd
 from pymongo import MongoClient
 import os
-
-app = Flask(__name__)
-
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
-csrf = CSRFProtect(app)
-
-# 禁用 CSRF 保护
 app.config['WTF_CSRF_ENABLED'] = False
+
 
 # Assuming the model is in the same directory as this script
 model_path = os.path.join(os.path.dirname(__file__), 'rf_model.joblib')
